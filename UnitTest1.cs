@@ -1,4 +1,5 @@
 using NUnit.Framework;
+using NUnit.Framework.Interfaces;
 using OpenQA.Selenium;
 using OpenQA.Selenium.Chrome;
 using OpenQA.Selenium.Interactions;
@@ -17,6 +18,7 @@ namespace TestProject1
     public class Tests
     {
         private IWebDriver driver;
+
         [SetUp]
         public void Setup()
         {
@@ -26,8 +28,10 @@ namespace TestProject1
             driver = new ChromeDriver();
             driver.Manage().Window.Maximize(); // Maximize the browser window
             driver.Manage().Timeouts().ImplicitWait = TimeSpan.FromSeconds(10); // Set implicit wait
+            driver.Url = "https://seleniumbase.io/demo_page";
 
         }
+
 
         [Test]
         public void Test1()
@@ -67,7 +71,7 @@ namespace TestProject1
         [Test]
         public void Test2()
         {
-            driver.Navigate().GoToUrl("https://seleniumbase.io/demo_page");
+            //driver.Navigate().GoToUrl("https://seleniumbase.io/demo_page");
 
             IWebElement textInput = driver.FindElement(By.XPath("/html/body/form/table/tbody/tr[2]/td[2]/input"));
 
@@ -81,26 +85,28 @@ namespace TestProject1
         }
 
         [Test]
+        // hover and click
         public void Test3()
         {
-            //driver.Navigate().GoToUrl("https://seleniumbase.io/demo_page");
-            driver.Url = "https://seleniumbase.io/demo_page";
+            //driver.Url = "https://seleniumbase.io/demo_page";
 
             // Initialize Actions class
             Actions actions = new Actions(driver);
 
             //1.Locate the main menu item to hover over
             IWebElement mainMenu = driver.FindElement(By.XPath("/html/body/form/table/tbody/tr[1]/td[3]/div/div[1]"));
-            
 
+            IWebElement dropdownOption = driver.FindElement(By.XPath("/html/body/form/table/tbody/tr[1]/td[3]/div/div[2]/a[3]"));
 
-            textInput.SendKeys("Vercel");
+            actions.MoveToElement(mainMenu).Click(dropdownOption).Build().Perform();
 
-            string actualText = textInput.GetAttribute("value").Trim();
+            IWebElement textDisplayed = driver.FindElement(By.XPath("/html/body/form/table/tbody/tr[1]/td[4]/h3"));
 
-            Assert.AreEqual("Vercel", "Vercel");
+            string actualText = textDisplayed.Text;
 
-            Console.WriteLine($"Web Testing Page' completed. Page Title: {driver.Title}");
+            Assert.AreEqual(actualText, "Link Three Selected");
+
+            Console.WriteLine($"Web Testing Page' completed. Page Title: {textDisplayed}");
         }
 
 
